@@ -42,9 +42,16 @@ public class ControllerTest {
         new V1PodList().metadata(new V1ListMeta()).items(Arrays.asList(foo1, foo2, foo3));
     DeltaFIFO deltaFIFO = new DeltaFIFO(Caches::deletionHandlingMetaNamespaceKeyFunc, new Cache());
 
+    V1Pod modifiedFoo3 =
+        new V1Pod()
+            .metadata(
+                new V1ObjectMeta()
+                    .name("foo3")
+                    .namespace("default")
+                    .resourceVersion("modifiedFoo3"));
     ListerWatcher<V1Pod, V1PodList> listerWatcher =
         new MockRunOnceListerWatcher<V1Pod, V1PodList>(
-            podList, new Watch.Response<V1Pod>(EventType.MODIFIED.name(), foo3));
+            podList, new Watch.Response<V1Pod>(EventType.MODIFIED.name(), modifiedFoo3));
 
     Controller<V1Pod, V1PodList> controller =
         new Controller<>(
